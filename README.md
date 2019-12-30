@@ -16,7 +16,7 @@ A quick example of recurrence rule - partial implementation of RFC 5545
 2. If there are several availabilities that include the given date, the availabilities with the smallest duration take precedence.
 3. The duration of an availability is defined as number of days between StartDate and EndDate.
 4. For the same duration you return a reunion of hour intervals for each day
-5. Add a caching layer that will temporarily save the database data in memory
+5. Add a caching layer that will increase the response time
 
 ## Examples
 - The records in AvailableDateTimes tables
