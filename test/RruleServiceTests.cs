@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Moq;
-using RruleTool.Abstractions;
 using RruleTool.Repository;
 using RruleTool.Rules;
 using Xunit;
@@ -20,7 +18,7 @@ namespace RRule.Tests
         public void OutputTests(string input, int timePeriodCount, string expected)
         {
             DataAccessRepository repository = new DataAccessRepository();
-            RruleService service = new RruleService(CreateCacheMock(), repository);
+            RruleService service = new RruleService(repository);
 
             if (DateTime.TryParse(input, out DateTime result))
             {
@@ -33,12 +31,6 @@ namespace RRule.Tests
                     Assert.Equal(expected, actual);
                 }
             }
-        }
-
-        private ISimpleDataCache CreateCacheMock()
-        {
-            Mock<ISimpleDataCache> cache = new Mock<ISimpleDataCache>();
-            return cache.Object;
         }
     }
 }

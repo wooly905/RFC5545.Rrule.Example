@@ -12,10 +12,12 @@ namespace RruleTool.Controllers
     public class RruleController : ControllerBase
     {
         private readonly IRruleService _ruleServie;
+        private readonly ISimpleDataCache _cache;
 
-        public RruleController(IRruleService service)
+        public RruleController(IRruleService service, ISimpleDataCache cache)
         {
             _ruleServie = service;
+            _cache = cache;
         }
 
         // GET api/rrule
@@ -24,13 +26,22 @@ namespace RruleTool.Controllers
         {
             IReadOnlyList<RruleTimes> times = null;
 
-            if (DateTime.TryParse(input, out DateTime result))
+            if (!DateTime.TryParse(input, out DateTime inputDate))
             {
-                times = await _ruleServie.GetAvailableTimesAsync(result).ConfigureAwait(false);
+                return Array.Empty<string>();
             }
+
+            if (_cache.TryGet(inputDate.ToString("MM/dd/yyyy"), out object value)
+                && value is string[] data)
+            {
+                return data;
+            }
+
+            times = await _ruleServie.GetAvailableTimesAsync(inputDate).ConfigureAwait(false);
 
             if (times == null || times.Count == 0)
             {
+                _cache.Set(inputDate.ToString("MM/dd/yyyy"), Array.Empty<string>());
                 return Array.Empty<string>();
             }
 
@@ -41,7 +52,10 @@ namespace RruleTool.Controllers
                 results.Add(time.ToString());
             }
 
-            return results.ToArray();
+            string[] output = results.ToArray();
+            _cache.Set(inputDate.ToString("MM/dd/yyyy"), output);
+
+            return output;
         }
     }
 }
