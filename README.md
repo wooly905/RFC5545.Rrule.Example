@@ -1,4 +1,4 @@
-# RFC5545.Rrule.Example
+# RFC5545 Rrule Example
 A quick example of recurrence rule - partial implementation of RFC 5545
 
 ## Database AvailableDateTimes table
